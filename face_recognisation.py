@@ -8,12 +8,14 @@ Created on Sun Jun 13 13:37:31 2021
 # import the modules
 import cv2
 
+
 # now we have the haarcascades files 
 # to detect the face and eyes to detect the face
-faces=cv2.CascadeClassifier('D:\\Eye_ball_cursor\\haarcascade_frontalface_default.xml')
+faces=cv2.CascadeClassifier('F:\\Deep learning implementation\\revision_implementation\\Haar_cascade\\env\\Lib\\site-packages\\cv2\\data\\haarcascade_frontalface_default.xml')
 
 # to detect the eyes
-eyes=cv2.CascadeClassifier('D:\\Eye_ball_cursor\\haarcascade_eye.xml')
+eyes=cv2.CascadeClassifier('F:\\Deep learning implementation\\revision_implementation\\Haar_cascade\\env\\Lib\\site-packages\\cv2\\data\\haarcascade_eye.xml')
+
 
 # capture the frame through webcam
 capture=cv2.VideoCapture(0)
