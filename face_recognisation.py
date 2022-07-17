@@ -11,51 +11,32 @@ import cv2
 
 # now we have the haarcascades files 
 # to detect the face and eyes to detect the face
-faces=cv2.CascadeClassifier('F:\\Deep learning implementation\\revision_implementation\\Haar_cascade\\env\\Lib\\site-packages\\cv2\\data\\haarcascade_frontalface_default.xml')
+face_cascade=cv2.CascadeClassifier('F:\\Deep learning implementation\\revision_implementation\\Haar_cascade\\env\\Lib\\site-packages\\cv2\\data\\haarcascade_frontalface_default.xml')
 
 # to detect the eyes
-eyes=cv2.CascadeClassifier('F:\\Deep learning implementation\\revision_implementation\\Haar_cascade\\env\\Lib\\site-packages\\cv2\\data\\haarcascade_eye.xml')
+eye_cascade=cv2.CascadeClassifier('F:\\Deep learning implementation\\revision_implementation\\Haar_cascade\\env\\Lib\\site-packages\\cv2\\data\\haarcascade_eye.xml')
 
 
 # capture the frame through webcam
-capture=cv2.VideoCapture(0)
+def detect(gray, frame):
+    faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+    for (x, y, w, h) in faces:
+        cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
+        roi_gray = gray[y:y+h, x:x+w]
+        roi_color = frame[y:y+h, x:x+w]
+        eyes = eye_cascade.detectMultiScale(roi_gray, 1.1, 3)
+        for (ex, ey, ew, eh) in eyes:
+            cv2.rectangle(roi_color, (ex, ey), (ex+ew, ey+eh), (0, 255, 0), 2)
+    return frame
 
-# now running the loop for the webcam
+# Doing some Face Recognition with the webcam
+video_capture = cv2.VideoCapture(0)
 while True:
-    # reading the webcam
-    ret,frame=capture.read()
-    frame = cv2.flip(frame,1)
-    # now the face is in the frame
-    # the detection is done with the gray scale frame
-    gray_frame=cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
-    face=faces.detectMultiScale(gray_frame,1.3,5)
-
-    # now getting into the face and its position
-    for (x,y,w,h) in face:
-        # drawing the rectangle on the face
-        cv2.rectangle(frame,(x,y),(x+w,y+h),(0,0,255),thickness=4)
-
-        # now the eyes are on the face
-        # so we have to make the face frame gray
-        gray_face=gray_frame[y:y+h,x:x+w]
-
-        # make the color face also
-        color_face=frame[y:y+h,x:x+w]
-
-        # check the eyes on this face
-        eye=eyes.detectMultiScale(gray_face,1.3,5)
-
-        # get into the eyes with its position
-        for (a,b,c,d) in eye:
-            # we have to draw the rectangle on the
-            # coloured face
-            cv2.circle(color_face,(a,b),(a+c,b+d),(0,255,0),thickness=4)
-
-    # show the frame
-    cv2.imshow("Face Recognisation Frame",frame)
-    if cv2.waitKey(1)==27:
+    _, frame = video_capture.read()
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    canvas = detect(gray, frame)
+    cv2.imshow('Video', canvas)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
         break
-
-# after ending the loop release the frame
-capture.release()
+video_capture.release()
 cv2.destroyAllWindows()
